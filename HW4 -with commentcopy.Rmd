@@ -1,0 +1,119 @@
+---
+title: "HW4"
+author: "Yuan Yao"
+date: "October 1, 2015"
+output: html_document
+---
+
+
+
+```{r}
+
+a<-c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
+
+b<-c(20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1)
+c<-c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1)
+ tmp.<-c(4,6,3)
+ #Above is very easy assignment to the vectors
+ #which uses <- to assign values to the vector
+ e<-rep.int(tmp.,10) ##simply repeat the tmp. 10 times 
+ 
+ f<-rep_len(tmp.,31)## repeat the(4 6 3) until the length is 31
+ 
+ g<-c(rep(4,each=10),rep(6,each=20),rep(3,each=30))
+ # seprate the vectors into three part, first part repeat '4' 10 #times and '6' 20 times '3' 30 times
+ print(a)
+ print(b)
+ print(c)
+ print(tmp.)
+ print(e)
+ print(f)
+ print(g)
+ ##print everything
+ x<-seq(3,6,by=0.1)#first create the sequence of x 
+ #start from 3 to 6 increase by 0.1
+ y<-exp(x)*cos(x) #new vector have y
+ print(y)
+ vec3=(0.1^seq(3,36,by=3)*0.2^seq(1,34,by=3))#use two vector
+ #two sequence then put them into power
+ print(vec3)
+ vec3b=(2^seq(1,25,by=1)/seq(1,25,by=1))
+ #first create sequence of the vector
+ #put into function
+ #vecotor ari
+ print(vec3b)
+ 
+ i=seq(10,100,by=1) #create sequence i
+ vec4a=(i^3+4i^2)  #put into function 
+ 
+ print(sum(vec4a)) #get sum
+ 
+ 
+ vec4bi=seq(1,25,by=1)  #frist get sequence of vector
+ vec4b=(2^vec4bi/vec4bi+3^vec4bi/vec4bi^2) #put into vector
+ print(sum(vec4b))  #get sum
+
+ 
+ 
+ vec5a=paste(c("Label"),1:30,sep=" ") #use paste function 1-30
+ #sep is the thing sperate betweeen paste
+ print(vec5a)
+ vec5b=paste(c("fn"),1:30)  #paste without the space
+ print(vec5b)
+ xVec <- sample(0:999, 250, replace=T) 
+yVec <- sample(0:999, 250, replace=T)
+#create vector randomly
+vec6a=(yVec[2:250]-xVec[1:249])
+#this is two random vectors then start from 2-250
+#1-249 second vector, then minus each other
+print(vec6a)
+vec6b=(sin(yVec[1:249])/cos(xVec[2:250]))
+#same principle above
+print(vec6b)
+vec6c=(xVec[1:248]+2*xVec[2:249]-xVec[3:250])
+#same principle above
+print(vec6c)
+vec6d=sum(((exp(-xVec)+1)/(xVec+10)))
+#put the xvec into function
+print(vec6d)
+vec7a=(yVec[yVec>600])#this meothod which is find the 
+#values in the vecotor which is greater than 600 then put into new
+#vector
+print(vec7a)
+vec7b=match(vec7a,yVec)
+#this method will return the positions in the vectors 
+print(vec7b)
+vec7c=xVec[vec7b]
+#vec7b itself is a vector and put [] into xVec will keep return
+#values in the xvec
+print(vec7c)
+vec7d=((xVec-mean(xVec))^0.5)
+#this is the new vector to store the the function output which is minus mean sqrt
+print(vec7d)
+vec7e=length(yVec[yVec>(max(yVec)-200)])
+#yVec to find greater than max-200 then find the new vector's length
+print(vec7e)
+vec7f=length(xVec[xVec%%2==0])
+#vector[find even number]  then get size of the vector
+print(vec7f)
+vec7g=yVec[match(sort(xVec,decreasing=FALSE),xVec)]
+#sort the xvec first and then to match the positions in y vec then return a new vec
+print(vec7g)
+vec7h=yVec[seq(1,250,by=3)]
+#first create sequence vec to represent the position then put into the yvec
+ print(vec7h)
+nu=cumprod(seq(2,38,by=2))
+#find the denomenator first by using cumprod
+
+de=cumprod(seq(3,39,by=2))
+#find the denomenator by using cumprod function
+div=(nu/de)
+#divide them
+vec8=sum(div)+1 #sum the vector then add 1
+print(vec8)
+
+```{r}
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+
