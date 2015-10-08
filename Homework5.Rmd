@@ -1,0 +1,92 @@
+---
+title: "Homework5"
+author: "Yuan Yao"
+date: "October 7, 2015"
+output: html_document
+---
+
+
+
+```{r}
+#This is the first question to extract all the numerical columns from the data set diamonds
+require(ggplot2)#load ggplot2 in order to use later
+data(diamonds)#load data frame diamonds
+#use function sapply to extract data from diamonds then store into a new matrix
+#by calling function "sapply". by calling that we put data frame diamonds and 
+#as.numeric is the condition being extract
+#since data frame allows different type of values to be extract
+numericlist<-diamonds[sapply(diamonds,is.numeric)]
+#but now, numericlist is a matrix which is not a data frame
+View(numericlist)
+```
+
+
+
+```{r}
+# 2. Want to form a new data frame
+#each pair of numerical name to be paired then stored at the first column
+#and the correlation is in the second column
+#and the result we want is the data frame which is not a matrix or vecotor and array
+
+numericlist<-data.frame(numericlist) #first make the numericlist become a data frame
+
+name1<-names(numericlist)#Then get all the names of the dataframe put in a vector
+
+name2<-names(numericlist)#I get same name put in the second vector
+
+pairname<-NULL#here I create two empty vector in order to store the pair names and 
+#coreleation in future,
+correlation<-NULL #this was used to store values of correlation 
+#Here is the method I am going to use to pair unrepeated name in the list
+#first goingthrough each element of the name1 list 
+#while you going through all the element for example
+#now I pick up the first one in name1 to pair all the element after 1st one 
+#in the name2, then we pick up 2nd in name1, to pair all element after 2nd one 
+#in the name2, but we have to stop the one before last one, because we can't pair last one
+#to last one, this will result reapeat pairs
+#This is the ideal I apply nested loop for the combination of two variables
+#and this ideal can also be applied to the third one
+#But BUt!!!! Attention! There is a very big short back of this loop method
+#because the R doesnt like Python or C++. The memory can't be released automaticly
+#after the loop, so, before running the loop, I have to clean the memory by hand
+#so while grader look at my work, please clean the memory first then run it
+#so far I am not figure out yet how to make the memory released automaticly yet
+#I will ask this to Professor G
+for (n in 1:(length(name1)-1)) #Loop through the name list
+{
+  for (m in (n+1):length(name2)) #this means pair the the number after first pick up
+  {
+    pairname<-c(pairname,paste(name1[n],name2[m],sep="-")) #pair name
+    #store it into the new list 
+    correlation<-c(correlation,cor(numericlist[,n],numericlist[,m],method="pearson"))
+    #get correlation store it to the vector
+  }
+}
+
+paircorrelation<-data.frame(pairname,correlation) #The make data frame of two
+
+
+View(paircorrelation) #see this data frame
+
+```
+
+```{r}
+#The third question basically use the same ideal that use the loop in second one
+#For each pair just plot the scatter
+multiplot<- par( mfrow = c(3,7))
+#This is the loop i actually copy from above
+for (i in 1:(length(name1)-1))
+{
+  for (j in (i+1):length(name2))
+  {
+    plot(numericlist[ ,i],numericlist[ ,j],main=cor(numericlist[,i],numericlist[,j],method="pearson"),xlab=name1[i],ylab=name2[j])  #for every pair in the loop
+    #just plot a new graph with variable with each pair 
+    #and in the same time lable each name with pair name and label titel
+    #with the correlation
+  }
+}
+par(multiplot)
+multiplot
+
+
+```
