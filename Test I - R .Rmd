@@ -1,0 +1,108 @@
+
+```{r}
+#Here is the R problem question number 1
+#Add a	logical	column	to	diamonds	based	on	the ratio	of	1’s	and	0’s	in	the mtcars$vs	variable.	The	variable	in	mtcars	is	numeric	meaning	that	you	will	need	to	create	a	logical equivalent,	extend	it	to	the	same	length	as	diamonds	and	add	it	to	diamonds	data	frame.
+
+data(diamonds) #load data diamonds
+data(mtcars) #load data mtcars
+
+length(mtcars$vs) #get the length of 0 and 1 s in the mtcar$vs
+length(diamonds$price)  #want to get the the length of the column in the diamonds
+c<-(length(diamonds$carat))/(length(mtcars$vs)) #my idea here to extend the column as 
+#length as the diamonds, is to repeat the vs cars as many time as posiible so here I get
+#the ratio of the two column length and store the value into c
+ 
+c<-round(c) #c is not an integer so i round it
+#if I use the rounded one the repeat of vs will exceed the length of diamonds
+c<-c-1 #I take c-1
+
+logicvec<-NULL #creat a new empty vector to store number of 1s and 0s into it
+
+logicvec<-rep.int(mtcars$vs,c) #here repeat the mtcars$vs c times
+# Now the length of logicvec is not enought which is 20 shorter than diamonds
+logicvec<-c(logicvec,rep(1,each=9),rep(0,each=11)) 
+#Since I cant get perfect ratio as the mtcars and the diamonds
+#This is the closet ration I could get add 9 more 1s and 11 more 0s
+#By using the repeat function
+logicvec<-as.logical(logicvec) #Then transform the vector into a logical one
+class(logicvec) 
+#check whehter it is the the logical one
+
+diamonds1<-diamonds  #store the new datafram diamonds1 because I dont want to change of the original data
+
+
+diamonds1[,"logic"]<-c(logicvec) #add this column to diamonds1 
+
+
+View(diamonds1) #see diamonds1 
+
+```
+
+
+```{r}
+#. Figure out how to generically extract all factor	and	logical	columns from	any	data	frame	so	the	method	you	develop	can	be	used	on	any	data
+
+factor<-diamonds[sapply(diamonds,is.factor)] #This function is very easy and generic
+#In homework 5 we can extract all the numeric column by using ssaply funcion
+#here We still use sapply function to extract all the factor column to store it into 
+#a new vector called factor
+logica<-diamonds1[sapply(diamonds1,is.logical)]#Same function can be used here in the logical vector to
+#store it into new vector logica
+View(factor)
+View(logica)#To view those two vectors
+
+
+
+
+```
+
+```{r}
+#Plot	a	gray	bar	graph	for	every	factor	and	logical variable.
+require(ggplot2) #load ggplot2 before we plot the graph
+data.frame(factor) #first made the factor vector above as dataframe
+data.frame(logica) #made logica as dataframe to
+cut_bargraph<-ggplot(factor,aes(x=factor$cut)) #creat cut_bargraph as ggplot
+
+cut_bargraph+geom_bar(fill="grey") #Draw the graph and set the color into grey
+color_bargraph<-ggplot(factor,aes(x=factor$color))
+#draw the color column as bar graph
+color_bargraph+geom_bar(fill="grey")
+#draw the calrity columns as bar graph
+clarity_bargraph<-ggplot(factor,aes(x=factor$clarity))
+
+clarity_bargraph+geom_bar(fill="grey")
+#finally draw the logiacal column as bargraph
+logical_bargraph<-ggplot(logica,aes(x=logica$logic))
+logical_bargraph+geom_bar(fill="grey")
+
+#shoud have four different bar graph as above
+#The code is itself simply call ggplot then set aes x equals to the variables you found
+#Plot every single one of the m
+
+```
+
+```{r}
+#Create	a	list of frequency	tables that	contains	one	table	for	each categorical and	logical variable in	the	data	frame.
+
+#if we understand what is categrical variables then the code is very easy
+#In dataframe, the categorical variable used to store a factor variables, it could be 
+# orederd or non-ordered
+#look at the diamonds1, which we add logical column into it
+#All columns are numerical except cut, color, clarity, logical
+#Those columns could have some factor then we could find its frequency
+#Then the answer can be easily done
+cut_table<-table(factor$cut) #use the table function to store each column in diamonds1
+class(cut_table) #I use a class function here to define what actually data type
+#we store it into cut_table
+#what it returns is table
+color_table<-table(factor$color) #samething to be done each column of color
+clarity_table<-table(factor$clarity) #samething to be done in clarity
+logical_table<-table(logica$logic)#samething to be done in logic
+#all the variables defiend above are table datatype
+categoricallist<-list(cut_table,color_table,clarity_table,logical_table) #store it into list
+categoricallist
+#by seeing the categroicallsit, we check the ratio of Fs and Ts in question 1 is correct
+
+
+
+```{r}
