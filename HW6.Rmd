@@ -1,0 +1,127 @@
+---
+title: "Untitled"
+author: "Yuan Yao"
+date: "October 22, 2015"
+output: html_document
+---
+
+
+```{r}
+#This part I am writting the functions which take up all the requirement at the question
+require(ggplot2)
+require(grid)
+explore<-function(data, vector, double1)
+{
+ #part1
+  #First extract all the numerical columns from the data
+   data_num<-data[sapply(data,is.numeric)]
+   #second extract all the names of the column to store it into a new vector
+  name<-names(data_num)
+  #Then we goes into the loop every numerical columns in the data_num
+  for (n in 1:(length(name)))
+  {
+    mean<-sum(data_num[,n])/length(data_num[,n])#for each column, calculate the mean
+    #Then loop through every bin size in the vector
+    for(m in 1:length(vector))
+    {
+      #Then creat histogram_count into ggplot
+      #Very inmportant!!! Dont forget the scope of the function by calling
+      #ggplot, have to set environment=envrionment()
+      histogram_count<-ggplot(data_num,aes(x=data_num[,n]),environment=environment())
+      histogram_count<-histogram_count+geom_histogram(fill="blue",binwidth=vector[m])
+      histogram_count<-histogram_count+geom_vline(xintercept=mean,color="red")+labs(x=name[n],y="count")
+      histogram_density<-ggplot(data_num,aes(x=data_num[,n]),environment=environment())+geom_density(color="blue")+geom_vline(xintercept=mean,color="red")+labs(x=name[n],y="density")
+      #Above is to create the density historgram
+    print(histogram_count)
+    print(histogram_density)#For each end of the loop
+    #Print the plot graph
+    }
+      
+  }
+#part2)
+  data_fac<-data[sapply(data,is.factor)]#Extract all the factor column from data
+  data_logic<-data[sapply(data,is.logical)] #and extract all the logical column
+  data_categ<-data.frame(data_fac,data_logic)#put the two vector togehter
+  name_cat<-names(data_categ) #get name of all category
+   
+  
+  for (i in 1:(length(name_cat))) #loop through every column for category
+       {
+       gray_bar<-ggplot(data_categ,aes(x=data_categ[,i]),environment=environment())+geom_bar(fill="grey")+labs(x=name_cat[i])
+       print(gray_bar)#ggplot every categorical column 
+       }
+       
+  
+ #part3 
+  name1<-names(data_num)#Then get all the names of the dataframe put in a vector
+
+name2<-names(data_num)#I get same name put in the second vector          
+  pairname<-NULL
+  r_square<-NULL
+  for (n in 1:(length(name1)-1)) #Loop through the name list
+{
+  for (m in (n+1):length(name2)) #this means pair the the number after first pick up
+  {
+    pairname<-c(pairname,paste(name1[n],name2[m],sep="-")) #pair name
+    #store it into the new list 
+    r_square<-c(r_square,summary(lm(data_num[,n]~data_num[,m]))$r.squared)
+    #get r_square value store it to the vector
+  }
+  }
+  
+pair_rsquare<-data.frame(pairname,r_square) #Then data frame pair name and r-square
+Returnlist<-c(pair_rsquare) #return the pair and rsquare value
+
+frequency_table<-NULL #create frequency table to store as a list
+for (i in 1:(length(name_cat))) #name through all catogorical column
+     {
+     frequency_table<-c(frequency_table,table(data_categ[,i]))#add table to the vector
+}
+frequency_table<-as.list(frequency_table) #Then put them as a list
+Returnlist<-c(Returnlist,frequency_table) #return it
+summary_table<-NULL #Create a new vector to store summary_table 
+for (i in 1:(length(name)))
+     {
+     summary_table<-c(summary_table,summary(data_num[,i])) #add every list to the summary table
+}
+    summary_table<-data.frame(summary_table) #make it as a list
+    Returnlist<-c(Returnlist,summary_table) #return it
+ pairname1<-NULL  #create two list to store value of pari name
+ correlation<-NULL  #and corelation
+  for (n in 1:(length(name1)-1)) #Loop through the name list
+{
+  for (m in (n+1):length(name2)) #this means pair the the number after first pick up
+  {
+    if (cor(data_num[,n],data_num[,m],method="pearson")>=double1) #check if the corellation is bigger than input
+    {pairname1<-c(pairname1,paste(name1[n],name2[m],sep="-")) #pair name
+    #store it into the new list 
+    correlation<-c(correlation,cor(data_num[,n],data_num[,m],method="pearson"))
+    }#store this into new list too
+  }
+  }
+ pair_cor<-data.frame(pairname1,correlation) #data frame them
+    
+    Returnlist<-c(Returnlist,pair_cor) #return it 
+    Returnlist<-as.list(Returnlist)
+    return(Returnlist)
+}
+```
+
+
+
+```{r}
+#here I am using some of the examples to test the functions
+
+bin<-c(5,20,50)
+
+corr<-0.25
+explore(diamonds,bin,corr)#This is the test of the function
+#it should return a list bunch of things 
+#if we want to manipulate those dataframes
+#we  can store it into a new variable then accesss to it
+
+
+explore(mtcars,bin,corr)
+
+```
+
