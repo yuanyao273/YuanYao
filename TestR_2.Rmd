@@ -1,0 +1,474 @@
+#This is the info for grader, for the whole test, I import the data abalone and faithful from outsource
+#of online sources, I've attached those files into the repository either. If you can't run my code well, please import data set i Porvided as abalone.csv and faithful.csv
+```{r}
+```
+#This is the Test #2 of R
+#Question 1
+#Take samples of 1%, 10%, 25%, 50%, 80%, and 100% of the data. Calculate the min, max, mean and variance of the Whole_wgt column from each sample and store in a dataframe. There should be 6 columns and four rows in the dataframe (a column for each sample size and a row for each measure). Name the mean row SampleMean, the other rows appropriately, and the columns based on the % sample.
+```{r}
+#This is the Test #2 of R
+#Question 1
+#Take samples of 1%, 10%, 25%, 50%, 80%, and 100% of the data. Calculate the min, max, mean and variance of the Whole_wgt column from each sample and store in a dataframe. There should be 6 columns and four rows in the dataframe (a column for each sample size and a row for each measure). Name the mean row SampleMean, the other rows appropriately, and the columns based on the % sample.
+require(ggplot2)
+View(abalone)  #Load data abalone
+nrow(abalone)
+#use sample function
+#here I take out the numbers instead of the percentige
+#But i use the percentige in Q8
+sample_1<- abalone[sample(1:nrow(abalone),round(nrow(abalone)*0.01)), ]
+#Sample function will take the random 418 rows among total 4117
+sample_10<-abalone[sample(1:4117,418), ]
+
+#1044 is exactly 25% rows of the total rows
+sample_25<-abalone[sample(1:4117,1044),]
+#2089 is 50 percent of total rows
+sample_50<-abalone[sample(1:4117,2089),]
+
+#3342 is the 80 percent of total rows
+sample_80<-abalone[sample(1:4117,3342),]
+
+sample_100<-abalone
+
+#take out every sample then extract whole.weight columns to calculate
+#min max mean var and then store into a new vector
+data_1<-c(min(sample_1$whole.weight),    max(sample_1$whole.weight),      mean(sample_1$whole.weight),var(sample_1$whole.weight)  )
+
+data_10<-c(min(sample_10$whole.weight),    max(sample_10$whole.weight),      mean(sample_10$whole.weight),var(sample_10$whole.weight) )
+
+data_25<-c(min(sample_25$whole.weight),    max(sample_25$whole.weight),      mean(sample_25$whole.weight),var(sample_25$whole.weight) )
+
+data_50<-c(min(sample_50$whole.weight),    max(sample_50$whole.weight),      mean(sample_50$whole.weight),var(sample_50$whole.weight) )
+
+data_80<-c(min(sample_80$whole.weight),    max(sample_80$whole.weight),      mean(sample_80$whole.weight),var(sample_80$whole.weight) )
+
+data_100<-c(min(sample_100$whole.weight),    max(sample_100$whole.weight),      mean(sample_100$whole.weight),var(sample_100$whole.weight) )
+
+#after you obtain 6 vectors of min max mean and var then dataframe them into a dataframe 
+Sample_summary<-data.frame(data_1,data_10,data_25,data_50,data_80,data_100)
+#use the rename function to name every row name 
+rownames(Sample_summary) = c("SampleMin", "SampleMax", "SampleMean", "SampleVariance")
+
+View(Sample_summary)
+
+
+```
+
+#2. Create a grid of histograms that contains all sample sizes.
+
+```{r}
+
+#2. Create a grid of histograms that contains all sample sizes.
+require(ggplot2)
+require(grid)
+require(gridExtra)
+
+#This vector of numbers that will used by sample function to get new sample
+samplelist<-c(42,418,1044,2089,3342,4117)
+
+
+     
+#for (i in samplelist)
+    #{
+     
+  # hist<-ggplot(abalone[sample(1:i),],aes(x=abalone[sample(1:i),]$whole.weight),environment=environment())+geom_histogram(colour="white",fill="black")
+  #hislist<-list(hist)
+#}
+
+#do.call(grid.arrange,  histlist)
+
+
+#above is my attempt to use the ggplot bu failed
+#Before definening the function just extract whole column and to use as an parameter
+abaloneweight<-data.frame(abalone$whole.weight)
+
+histplot<-function(data,listnum) #define the function and parameters
+{
+  par(mfrow=c(2,3))   #use par function everytime to define the grid
+  for(k in 1:ncol(data)) #This k loop is just for checking how many columns will be put in histogram
+    #if this is just one column, then this loop will only loop once
+    #this is designed for Q.4
+  {
+  for (i in listnum)  #get number in the list the sample them randonmly
+  {
+    hist(data[sample(1:nrow(data),i),k],main=paste("Histogram size of", i ),xlab= i) #use hist function
+  }
+  }
+}
+
+histplot(abaloneweight,samplelist)  #call function 
+
+
+```
+
+#3.Implement a loop that takes 1,000 samples at each of the sample sizes in 1 above (except the 100% sample!). Calculate a mean at each iteration and store the results in a dataframe. There should be four columns and 1,000 rows. Name the columns but NOT the rows.
+```{r}
+
+#3.Implement a loop that takes 1,000 samples at each of the sample sizes in 1 above (except the 100% sample!). Calculate a mean at each iteration and store the results in a dataframe. There should be four columns and 1,000 rows. Name the columns but NOT the rows.
+#again use vecotors to tore some numers then you can put them into sample functions 
+
+#define 6 empty vectors used to store repeated sampled size of different percentige and the get their 
+#mean to store in each of vectors defined below
+
+mean_1<-NULL
+mean_10<-NULL
+mean_25<-NULL
+mean_50<-NULL
+mean_80<-NULL
+mean_100<-NULL
+
+#Then start our loop 1000 times!
+
+for(i in 1:1000)
+{
+  #also we can use i as vector index to store the mean of each random sample 
+  mean_1[i]<-c(mean(abalone[sample(1:4117,42),]$whole.weight))
+  mean_10[i]<-c(mean(abalone[sample(1:4117,418),]$whole.weight))
+  mean_25[i]<-c(mean(abalone[sample(1:4117,1044),]$whole.weight))
+  mean_50[i]<-c(mean(abalone[sample(1:4117,2089),]$whole.weight))
+  mean_80[i]<-c(mean(abalone[sample(1:4117,3342),]$whole.weight))
+  mean_100[i]<-c(mean(abalone[sample(1:4117,4117),]$whole.weight))
+}
+#Then dataframe those different mean vectors into dataframe
+sample_1000<-data.frame(mean_1,mean_10,mean_25,mean_50,mean_80)
+colnames(sample_1000)<-c("Mean_1","Mean_10","Mean_25","Mean_50","Mean_80")
+View(sample_1000)
+```
+#4.Create another grid of histograms that contains the four columns just created and include the 100% sample from 1. (HINT: You should create a function to solve 2 and reuse here).
+
+```{r}
+#4.Create another grid of histograms that contains the four columns just created and include the 100% sample from 1. (HINT: You should create a function to solve 2 and reuse here).
+
+#recall the function in Q2 
+#we already defiend it can be used for any random data frame
+newsample_1000<-data.frame(sample_1000,mean_100) #include 100 percent sample
+
+histplot(newsample_1000,c(1000)) #plot function
+
+
+```
+#5.Calculate the min, max, mean and variance of each column from 3 and of the total dataset (the 100% sample). Append to the dataframe created in 1. Name the mean row ResampleMean and the others appropriately.
+```{r}
+#5.Calculate the min, max, mean and variance of each column from 3 and of the total dataset (the 100% sample). Append to the dataframe created in 1. Name the mean row ResampleMean and the others appropriately.
+
+#This is just doing repeated step as Q1
+#The difference is we just get min max mean var directly from the newsample above
+#To store it into different vector
+newdata_1<-c(min(newsample_1000$Mean_1),    max(newsample_1000$Mean_1),      mean(newsample_1000$Mean_1),var(newsample_1000$Mean_1)  )
+
+newdata_10<-c(min(newsample_1000$Mean_10),    max(newsample_1000$Mean_10),      mean(newsample_1000$Mean_10),var(newsample_1000$Mean_10)  )
+newdata_25<-c(min(newsample_1000$Mean_25),    max(newsample_1000$Mean_25),      mean(newsample_1000$Mean_25),var(newsample_1000$Mean_25)  )
+newdata_50<-c(min(newsample_1000$Mean_50),    max(newsample_1000$Mean_50),      mean(newsample_1000$Mean_50),var(newsample_1000$Mean_50)  )
+newdata_80<-c(min(newsample_1000$Mean_80),    max(newsample_1000$Mean_80),      mean(newsample_1000$Mean_80),var(newsample_1000$Mean_80)  )
+newdata_100<-c(min(newsample_1000$mean_100),    max(newsample_1000$mean_100),      mean(newsample_1000$mean_100),var(newsample_1000$mean_100)  )
+#data frame every vector
+newsample_summary<-data.frame(Sample_summary,newdata_1,newdata_10,newdata_25,newdata_50,newdata_80,newdata_100)
+#rename the row again
+rownames(newsample_summary) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+View(newsample_summary)
+
+
+```
+#6.Create a single histogram of the 100% data and overlay and label lines that represent the 1%, 10%, 25%, 50%, and 80% SampleMean.
+```{r}
+#6.Create a single histogram of the 100% data and overlay and label lines that represent the 1%, 10%, 25%, 50%, and 80% SampleMean.
+
+#Before using hist function
+#using par function to define the grid
+par(mfrow=c(1,1))
+#The code below is first plot 100 percent sample data
+hist(sample_100$whole.weight,main="Histogram of 100 percent sample")
+#use for loop to plot every sample mean from dataframe already define above Sample_summary
+#But we are gonna use the row values
+for(i in 1:length(Sample_summary))
+{
+  abline(v=Sample_summary[3,i],col="red")
+  text(x=Sample_summary[3,i],i,names(Sample_summary)[i],col="red")
+}
+
+
+
+```
+#7.Create a second histogram of the 100% data and overlay and label vertical lines that represent the 1%, 10%, 25%, 50%, and 80% ResampleMean.
+```{r}
+
+#7.Create a second histogram of the 100% data and overlay and label vertical lines that represent the 1%, 10%, 25%, 50%, and 80% ResampleMean.
+resamplemean<-data.frame(newdata_1,newdata_10,newdata_25,newdata_50,newdata_80,newdata_100)
+rownames(resamplemean) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+#before plot the graph
+#we have to redeine the resamplemin data frame as above 
+#data frame all the newdata in Q4
+#define grid
+par(mfrow=c(1,1))
+#first plot 100 percent sample data
+hist(sample_100$whole.weight,main="Histogram of 100 percent sample")
+#Then plot every value from resample dataframe
+for(i in 1:length(resamplemean))
+{
+  abline(v=resamplemean[3,i],col="red")
+  text(x=resamplemean[3,i],i,names(resamplemean)[i],col="red")
+}
+```
+#Q8 Now execute your code on diamonds$carat and faithful$eruptions
+```{r}
+#Now execute your code on diamonds$carat and faithful$eruptions
+require(ggplot2)
+require(grid)
+
+#excute part1 for diamonds and faithful
+#This is just copy and paste of my  code in Q1
+#The deference is just I used round function to round the exactly rows need to be take out
+#as percentage of the random sample
+#notice I replace sample(1:nrow)  nrow(data) tells you total rows
+#nrow*0.01 means the one percent of data so as 0.25 0.8 etc
+#Then these values are work as same as Q1 as 42, 1044 etc
+#before I start using diamonds, i just take out carat coluumn make them as new data frame
+diamonds_carat<-data.frame(diamonds$carat)
+sample_diamonds1<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.01)), ]
+sample_diamonds10<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.1)), ]
+sample_diamonds25<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.25)), ]
+sample_diamonds50<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.5)), ]
+sample_diamonds80<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.8)), ]
+sample_diamonds100<- diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*1)), ]
+diamonds_data_1<-c(min(sample_diamonds1),    max(sample_diamonds1),      mean(sample_diamonds1),var(sample_diamonds1)  )
+
+diamonds_data_10<-c(min(sample_diamonds10),    max(sample_diamonds10),      mean(sample_diamonds10),var(sample_diamonds10) )
+
+diamonds_data_25<-c(min(sample_diamonds10),    max(sample_25$whole.weight),      mean(sample_25$whole.weight),var(sample_25$whole.weight) )
+
+diamonds_data_50<-c(min(sample_diamonds50),    max(sample_diamonds50),      mean(sample_diamonds50),var(sample_diamonds50) )
+
+diamonds_data_80<-c(min(sample_diamonds80),    max(sample_diamonds80),      mean(sample_diamonds80),var(sample_diamonds80) )
+
+diamonds_data_100<-c(min(sample_diamonds100),    max(sample_diamonds100),      mean(sample_diamonds100),var(sample_diamonds100) )
+
+diamonds_Sample_summary<-data.frame(diamonds_data_1,diamonds_data_10,diamonds_data_25,diamonds_data_50,diamonds_data_80,diamonds_data_100)
+rownames(diamonds_Sample_summary) = c("SampleMin", "SampleMax", "SampleMean", "SampleVariance")
+
+#above is just repeated step of Q1
+
+View(diamonds_Sample_summary)
+```
+#excute for faithful for Q1
+```{r}
+#excute for faithful
+#Repeated step as above
+faithful_eruptions<-data.frame(faithful$eruptions)
+sample_faithful1<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.01)), ]
+sample_faithful10<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.1)), ]
+sample_faithful25<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.25)), ]
+sample_faithful50<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.5)), ]
+sample_faithful80<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.8)), ]
+sample_faithful100<- faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*1)), ]
+
+faithful_data_1<-c(min(sample_faithful1),    max(sample_faithful1),      mean(sample_faithful1),var(sample_faithful1)  )
+
+faithful_data_10<-c(min(sample_faithful10),    max(sample_faithful10),      mean(sample_faithful10),var(sample_faithful10) )
+
+faithful_data_25<-c(min(sample_faithful25),    max(sample_faithful25),      mean(sample_faithful25),var(sample_faithful25) )
+
+faithful_data_50<-c(min(sample_faithful50),    max(sample_faithful50),      mean(sample_faithful50),var(sample_faithful50) )
+
+faithful_data_80<-c(min(sample_faithful80),    max(sample_faithful80),      mean(sample_faithful80),var(sample_faithful80) )
+
+faithful_data_100<-c(min(sample_faithful100),    max(sample_faithful100),      mean(sample_faithful100),var(sample_faithful100) )
+
+faithful_Sample_summary<-data.frame(faithful_data_1,faithful_data_10,faithful_data_25,faithful_data_50,faithful_data_80,faithful_data_100)
+
+rownames(faithful_Sample_summary) = c("SampleMin", "SampleMax", "SampleMean", "SampleVariance")
+
+View(faithful_Sample_summary)
+
+```
+#redo diamonds and faithful in Q2
+```{r}
+#redo diamonds and faithful in No2
+
+#Before calling the function
+#we just need define the numbers need to sample
+#remember Q2 samplelist? This is work like nrow total rows times the pertige you want
+#Then round them to integer
+listnum<-c(round(nrow(diamonds_carat)*0.01),round(nrow(diamonds_carat)*0.1),round(nrow(diamonds_carat)*0.25),round(nrow(diamonds_carat)*0.5),round(nrow(diamonds_carat)*0.8),round(nrow(diamonds_carat)*1))
+
+histplot(diamonds_carat,listnum )
+# redo Q2 with faithful
+listnum1<-c(round(nrow(faithful_eruptions)*0.01),round(nrow(faithful_eruptions)*0.1),round(nrow(faithful_eruptions)*0.25),round(nrow(faithful_eruptions)*0.5),round(nrow(faithful_eruptions)*0.8),round(nrow(faithful_eruptions)*1))
+
+histplot(faithful_eruptions,listnum1)
+```
+#redo Diamonds and faithful in q3
+```{r}
+#redo Diamonds and faithful in No3
+#same procedure as Q3
+diamonds_mean_1<-NULL
+diamonds_mean_10<-NULL
+diamonds_mean_25<-NULL
+diamonds_mean_50<-NULL
+diamonds_mean_80<-NULL
+diamonds_mean_100<-NULL
+#same loop
+for(i in 1:1000)
+{
+  diamonds_mean_1[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.01)), ]))
+  diamonds_mean_10[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.1)), ]))
+  diamonds_mean_25[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.25)), ]))
+  diamonds_mean_50[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.5)), ]))
+  diamonds_mean_80[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*0.8)), ]))
+  diamonds_mean_100[i]<-c(mean(diamonds_carat[sample(1:nrow(diamonds_carat),round(nrow(diamonds_carat)*1)), ]))
+}
+#same way to data frame them in Q3
+diamonds_sample_1000<-data.frame(diamonds_mean_1,diamonds_mean_10,diamonds_mean_25,diamonds_mean_50,diamonds_mean_80)
+colnames(diamonds_sample_1000)<-c("Mean_1","Mean_10","Mean_25","Mean_50","Mean_80")
+View(diamonds_sample_1000)
+
+```
+#redo faithful q3
+```{r}
+#redo faithful No.3
+#same steps as above chunk just replace dimaonds with faithful
+faithful_mean_1<-NULL
+faithful_mean_10<-NULL
+faithful_mean_25<-NULL
+faithful_mean_50<-NULL
+faithful_mean_80<-NULL
+faithful_mean_100<-NULL
+
+for(i in 1:1000)
+{
+  faithful_mean_1[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.01)), ]))
+  faithful_mean_10[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.1)), ]))
+  faithful_mean_25[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.25)), ]))
+  faithful_mean_50[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.5)), ]))
+  faithful_mean_80[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*0.8)), ]))
+  faithful_mean_100[i]<-c(mean(faithful_eruptions[sample(1:nrow(faithful_eruptions),round(nrow(faithful_eruptions)*1)), ]))
+}
+faithful_sample_1000<-data.frame(faithful_mean_1,faithful_mean_10,faithful_mean_25,faithful_mean_50,faithful_mean_80)
+colnames(faithful_sample_1000)<-c("Mean_1","Mean_10","Mean_25","Mean_50","Mean_80")
+View(faithful_sample_1000)
+
+```
+#redo diamonds q4
+```{r}
+
+#redo diamonds No4
+#have to datafram with the 100 percent data first
+diamonds_newsample_1000<-data.frame(diamonds_sample_1000,diamonds_mean_100)
+#call the function
+histplot(diamonds_newsample_1000,c(1000))
+
+```
+#redo faithful q4
+```{r}
+#redo faithful No4
+#same procedure
+faithful_newsample_1000<-data.frame(faithful_sample_1000,faithful_mean_100)
+
+histplot(faithful_newsample_1000,c(1000))
+```
+#redo diamonds q5
+```{r}
+#redo diamonds No5
+#The same procedure as Q5
+#details are as same as Q5
+diamonds_newsample_1000<-data.frame(diamonds_sample_1000,diamonds_mean_100)
+diamonds_newdata_1<-c(min(diamonds_newsample_1000$Mean_1),    max(diamonds_newsample_1000$Mean_1),      mean(diamonds_newsample_1000$Mean_1),var(diamonds_newsample_1000$Mean_1)  )
+
+diamonds_newdata_10<-c(min(diamonds_newsample_1000$Mean_10),    max(diamonds_newsample_1000$Mean_10),      mean(diamonds_newsample_1000$Mean_10),var(diamonds_newsample_1000$Mean_10)  )
+diamonds_newdata_25<-c(min(diamonds_newsample_1000$Mean_25),    max(diamonds_newsample_1000$Mean_25),      mean(diamonds_newsample_1000$Mean_25),var(diamonds_newsample_1000$Mean_25)  )
+diamonds_newdata_50<-c(min(diamonds_newsample_1000$Mean_50),    max(diamonds_newsample_1000$Mean_50),      mean(diamonds_newsample_1000$Mean_50),var(diamonds_newsample_1000$Mean_50)  )
+diamonds_newdata_80<-c(min(diamonds_newsample_1000$Mean_80),    max(diamonds_newsample_1000$Mean_80),      mean(diamonds_newsample_1000$Mean_80),var(diamonds_newsample_1000$Mean_80)  )
+diamonds_newdata_100<-c(min(diamonds_newsample_1000$diamonds_mean_100),    max(diamonds_newsample_1000$diamonds_mean_100),      mean(diamonds_newsample_1000$diamonds_mean_100),var(diamonds_newsample_1000$diamonds_mean_100)  )
+diamonds_newsample_summary<-data.frame(diamonds_Sample_summary,diamonds_newdata_1,diamonds_newdata_10,diamonds_newdata_25,diamonds_newdata_50,diamonds_newdata_80,diamonds_newdata_100)
+rownames(diamonds_newsample_summary) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+View(diamonds_newsample_summary)
+
+
+```
+#redo faith in q5
+```{r}
+#redo faith in no5
+#same as above chunk replace dimaonds with faithful
+faithful_newsample_1000<-data.frame(faithful_sample_1000,faithful_mean_100)
+faithful_newdata_1<-c(min(faithful_newsample_1000$Mean_1),    max(faithful_newsample_1000$Mean_1),      mean(faithful_newsample_1000$Mean_1),var(faithful_newsample_1000$Mean_1)  )
+
+faithful_newdata_10<-c(min(faithful_newsample_1000$Mean_10),    max(faithful_newsample_1000$Mean_10),      mean(faithful_newsample_1000$Mean_10),var(faithful_newsample_1000$Mean_10)  )
+faithful_newdata_25<-c(min(faithful_newsample_1000$Mean_25),    max(faithful_newsample_1000$Mean_25),      mean(faithful_newsample_1000$Mean_25),var(faithful_newsample_1000$Mean_25)  )
+faithful_newdata_50<-c(min(faithful_newsample_1000$Mean_50),    max(faithful_newsample_1000$Mean_50),      mean(faithful_newsample_1000$Mean_50),var(faithful_newsample_1000$Mean_50)  )
+faithful_newdata_80<-c(min(faithful_newsample_1000$Mean_80),    max(faithful_newsample_1000$Mean_80),      mean(faithful_newsample_1000$Mean_80),var(faithful_newsample_1000$Mean_80)  )
+faithful_newdata_100<-c(min(faithful_newsample_1000$faithful_mean_100),    max(faithful_newsample_1000$faithful_mean_100),      mean(faithful_newsample_1000$faithful_mean_100),var(faithful_newsample_1000$faithful_mean_100)  )
+faithful_newsample_summary<-data.frame(faithful_Sample_summary,faithful_newdata_1,faithful_newdata_10,faithful_newdata_25,faithful_newdata_50,faithful_newdata_80,faithful_newdata_100)
+rownames(faithful_newsample_summary) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+View(faithful_newsample_summary)
+
+```
+#redo diamonds q6
+```{r}
+#redo diamonds No6
+
+#same procedure as Q6 details are as same as Q6
+par(mfrow=c(1,1))
+
+hist(sample_diamonds100,main="Histogram of 100 percent sample")
+for(i in 1:length(diamonds_Sample_summary))
+{
+  abline(v=diamonds_Sample_summary[3,i],col="red")
+  text(x=diamonds_Sample_summary[3,i],i,names(diamonds_Sample_summary)[i],col="red")
+}
+
+```
+#redo faithful q6
+```{r}
+#same as above chunk
+#redo faithful no6
+par(mfrow=c(1,1))
+
+hist(sample_faithful100,main="Histogram of 100 percent sample")
+for(i in 1:length(faithful_Sample_summary))
+{
+  abline(v=faithful_Sample_summary[3,i],col="red")
+  text(x=faithful_Sample_summary[3,i],i,names(faithful_Sample_summary)[i],col="red")
+}
+
+
+```
+#redo diamonds q7
+```{r}
+#redo diamonds #7
+diamonds_resamplemean<-data.frame(diamonds_newdata_1,diamonds_newdata_10,diamonds_newdata_25,diamonds_newdata_50,diamonds_newdata_80,diamonds_newdata_100)
+rownames(diamonds_resamplemean) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+#first have to re dataframe for each new date you get in procedure Q5
+#then below is same function as Q7
+par(mfrow=c(1,1))
+
+hist(sample_diamonds100,main="Histogram of 100 percent sample")
+for(i in 1:length(diamonds_resamplemean))
+{
+  abline(v=diamonds_resamplemean[3,i],col="red")
+  text(x=diamonds_resamplemean[3,i],i,names(diamonds_resamplemean)[i],col="red")
+}
+
+
+```
+#redo faithful q7
+```{r}
+
+#redo faithful no7
+#first have to re dataframe for each new date you get in procedure Q5
+#then below is same function as Q7
+faithful_resamplemean<-data.frame(faithful_newdata_1,faithful_newdata_10,faithful_newdata_25,faithful_newdata_50,faithful_newdata_80,faithful_newdata_100)
+rownames(faithful_resamplemean) = c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance")
+
+par(mfrow=c(1,1))
+
+hist(sample_faithful100,main="Histogram of 100 percent sample")
+for(i in 1:length(faithful_resamplemean))
+{
+  abline(v=faithful_resamplemean[3,i],col="red")
+  text(x=faithful_resamplemean[3,i],i,names(faithful_resamplemean)[i],col="red")
+}
+```
+Q9:#Provide a brief explanation of what you observe in the measures and histograms as it relates to sample size and resampling.
+
+```{r}
+
+#As the sample size getting larger, the measures and histograms are more accurate. Because more data in the sample more information of the data set in encode into the sample therefore the sample can reflect the information of the pupulation better and more accurate.
+```
